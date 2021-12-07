@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3Dmol experiment</title>
+    <script src="3Dmol-min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+    .mol-container {
+      width: 99.5%;
+      height: 800px;
+      position: relative;
+      border: 1px solid #999;
+    }
+    
+    .align-center {
+      /* width: 600px; */
+      margin: 20px auto 10px;
+      text-align: center;
+    }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2>Using 3Dmol within your code</h2>
+        <h3>Loading data dynamically</h3>
+    </header>
+    <p>All these methods (and more) are covered in detail in the <a href="$3Dmol.GLViewer">API documentation for GLViewer</a>.</p>
+    
+    <div class="align-center">
+      <input type="text" placeholder="Enter PDB ID" aria-label="Search" id="pdbidinput" maxlength="4" name="pdbidinput"></input>
+      <button class="btn btn-primary" id="btn-02">View it</button>
+      <button class="btn btn-primary" id="stick">Stick</button>
+      <button class="btn btn-primary" id="line">Line</button>
+      <button class="btn btn-primary" id="sphere">Sphere</button>
+      <button class="btn btn-primary" id="cartoon">Cartoon</button>
+
+      <p hidden id="placeholderloading"><b>Loading structure from server... It may take a while.</b></p>
+      <div id="container" class="mol-container"></div>
+    </div>
+    
+    <script>
+      jQuery(function() {
+        let element = $('#container');
+        let config = { defaultcolors: $3Dmol.elementColors.Jmol, backgroundColor: 'black' };
+        let viewer = $3Dmol.createViewer( element, config );
+        let v = viewer;
+        let p = document.getElementById('placeholderloading');
+      
+        $('#btn-02').on('click', function() {
+          p.toggleAttribute("hidden");
+          let pdbUri = 'https://files.rcsb.org/download/'+ $("input[name='pdbidinput']").val()+'.pdb';
+          jQuery.ajax( pdbUri, { 
+            success: function(data) {
+              v.clear();
+              v.addModel( data, "pdb" );                       /* load data */
+              // v.setStyle({}, {cartoon: {color: 'spectrum'}});  /* style all atoms */
+              v.zoomTo();                                      /* set camera */
+              // v.render();                                      /* render scene */
+              // v.zoom(1.2, 1000);                               /* slight zoom */
+              // v.setViewStyle({style:"outline",color:"black", width:0.1});
+              v.setStyle({}, {cartoon: {color : 'spectrum'}});   /* style all atoms */
+              v.setStyle({chain:'A'}, {cartoon:{arrows:true, color:'spectrum', opacity:0.9}});
+              v.setStyle({chain:'B'}, {cartoon:{style:"trace", color:'red'}});
+              v.setStyle({chain:'C'}, {cartoon:{tubes:true, color:'purple'}});
+              v.addSurface({},{opacity:0.85, color:'red'},{chain:'B'});
+              v.addSurface({}, {opacity:0.8, color:'blue'},{chain:'C'});
+              v.render();
+              p.toggleAttribute("hidden");
+            },
+            error: function(hdr, status, err) {
+              console.error( "Failed to load PDB " + pdbUri + ": " + err );
+            },
+          });
+        })
+
+        $('#stick').on('click', function() {
+          p.toggleAttribute("hidden");
+          let pdbUri = 'https://files.rcsb.org/download/'+ $("input[name='pdbidinput']").val()+'.pdb';
+          jQuery.ajax( pdbUri, { 
+            success: function(data) {
+              v.clear();
+              v.addModel( data, "pdb" );                       /* load data */
+              v.zoomTo();                                      /* set camera */
+              v.setStyle({},{stick:{}});
+              v.render();
+              p.toggleAttribute("hidden");
+            },
+            error: function(hdr, status, err) {
+              console.error( "Failed to load PDB " + pdbUri + ": " + err );
+            },
+          });
+        })
+
+        $('#line').on('click', function() {
+          p.toggleAttribute("hidden");
+          let pdbUri = 'https://files.rcsb.org/download/'+ $("input[name='pdbidinput']").val()+'.pdb';
+          jQuery.ajax( pdbUri, { 
+            success: function(data) {
+              v.clear();
+              v.addModel( data, "pdb" );                       /* load data */
+              v.zoomTo();                                      /* set camera */
+              v.setStyle({},{line:{}});
+              v.render();
+              p.toggleAttribute("hidden");
+            },
+            error: function(hdr, status, err) {
+              console.error( "Failed to load PDB " + pdbUri + ": " + err );
+            },
+          });
+        })
+
+        $('#sphere').on('click', function() {
+          p.toggleAttribute("hidden");
+          let pdbUri = 'https://files.rcsb.org/download/'+ $("input[name='pdbidinput']").val()+'.pdb';
+          jQuery.ajax( pdbUri, { 
+            success: function(data) {
+              v.clear();
+              v.addModel( data, "pdb" );                       /* load data */
+              v.zoomTo();                                      /* set camera */
+              v.setStyle({},{sphere:{}});
+              v.render();
+              p.toggleAttribute("hidden");
+            },
+            error: function(hdr, status, err) {
+              console.error( "Failed to load PDB " + pdbUri + ": " + err );
+            },
+          });
+        })
+
+        $('#cartoon').on('click', function() {
+          p.toggleAttribute("hidden");
+          let pdbUri = 'https://files.rcsb.org/download/'+ $("input[name='pdbidinput']").val()+'.pdb';
+          jQuery.ajax( pdbUri, { 
+            success: function(data) {
+              v.clear();
+              v.addModel( data, "pdb" );                       /* load data */
+              v.zoomTo();                                      /* set camera */
+              v.setStyle({hetflag:false},{cartoon:{color : 'spectrum'}});
+              v.render();
+              p.toggleAttribute("hidden");
+            },
+            error: function(hdr, status, err) {
+              console.error( "Failed to load PDB " + pdbUri + ": " + err );
+            },
+          });
+        })
+      })
+    </script>
+  </body>
+</html>
